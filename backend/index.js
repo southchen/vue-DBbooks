@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 require('dotenv').config();
+const EventSource = require('eventsource');
 const instance = axios.create({
   headers: { Cookie: process.env.DB_COOKIE },
   method: 'GET',
@@ -25,6 +26,26 @@ const queryBook = async (query) => {
   });
   return result.data;
 };
+
+var config = {
+  method: 'get',
+  url: 'https://book.douban.com/j/home/review_recommend?user_id=4266786',
+  headers: {
+    Cookie: 'bid=BNqIzu1syCY',
+  },
+};
+
+app.get('/new', (req, res) => {
+  axios(config)
+    .then(function (response) {
+      let result = response.data.result;
+      console.log(result);
+      res.json(result);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+});
 
 app.get('/', async (req, res) => {
   //   console.log(req.query);
